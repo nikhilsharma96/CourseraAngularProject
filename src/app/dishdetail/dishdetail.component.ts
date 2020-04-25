@@ -31,10 +31,12 @@ export class DishdetailComponent implements OnInit {
   validationMessage={
     'author':{
       'required':'Author Name is required.',
-      'minlength': 'Author Name must be atleast 2 characters long'
+      'minlength': 'Author Name must be atleast 2 characters long',
+      'maxlength': 'Author name can not be more than 25 characters long'
     },
     'comment':{
-      'required':'Comment is required.'
+      'required':'Comment is required.',
+      'minlength': 'Comment must be atleast 2 characters long',
     }
   }
 
@@ -64,8 +66,8 @@ export class DishdetailComponent implements OnInit {
 
   createForm(){
     this.addCommentForm=this.fb.group({
-      author:['',[Validators.required,Validators.minLength(2)]],
-      comment:['',[Validators.required]],
+      author:['',[Validators.required,Validators.minLength(2),Validators.maxLength(25)]],
+      comment:['',[Validators.required,Validators.minLength(2)]],
       rating:this.rating
     });
     this.addCommentForm.valueChanges

@@ -42,15 +42,16 @@
           <p matLine> --{{dish.comments[i].author}} {{dish.comments[i].date | date}} </p>
         </mat-list-item>
     
+        <mat-list-item  *ngIf="addCommentForm.valid">      
+          <p matLine> {{addCommentForm.value.comment}}</p>
+          <p matLine>{{addCommentForm.value.rating}} Stars</p>
+          <p matLine> --{{addCommentForm.value.author}}</p>
+        </mat-list-item>
+      </mat-list>
+
     <div class="form-size">
       <form novalidate [formGroup]="addCommentForm" #cform="ngForm" (ngSubmit)="onSubmit()">
-        
-          <mat-list-item  *ngIf="addCommentForm.valid">      
-            <p matLine> {{addCommentForm.value.comment}}</p>
-            <p matLine>{{addCommentForm.value.rating}} Stars</p>
-            <p matLine> --{{addCommentForm.value.author}}</p>
-          </mat-list-item>
-
+      
         <p matLine>
           <mat-form-field style="width: 100%;">
             <input matInput formControlName="author"  placeholder="Name" type="text">
@@ -75,9 +76,9 @@
         
         <button type="submit" mat-button class="background-primary text-floral-white"
           [disabled]="addCommentForm.invalid">Submit</button>
+      
       </form>
     </div>
-  </mat-list>
   </div>
   
   <div fxFlex [hidden]="dish">
