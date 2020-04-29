@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, ViewChild } from '@angular/core';
+import { Component, OnInit, Input, ViewChild, Inject } from '@angular/core';
 import { Dish } from 'src/app/shared/dish';
 import { Params } from '@angular/router';
 import { Location } from '@angular/common';
@@ -23,6 +23,7 @@ export class DishdetailComponent implements OnInit {
   @ViewChild('cform') commentFormDirective;
   rating:number=5;
 
+  errMess:string;
   formErrors={
     'author':'',
     'comment':''
@@ -32,7 +33,7 @@ export class DishdetailComponent implements OnInit {
     'author':{
       'required':'Author Name is required.',
       'minlength': 'Author Name must be atleast 2 characters long',
-      'maxlength': 'Author name can not be more than 25 characters long'
+      'maxlength': 'Author Name can not be more than 25 characters long'
     },
     'comment':{
       'required':'Comment is required.',
@@ -43,7 +44,8 @@ export class DishdetailComponent implements OnInit {
   constructor(private dishService:DishService,
     private route:ActivatedRoute,
     private location:Location,
-    private fb: FormBuilder) {
+    private fb: FormBuilder,
+    @Inject('BaseURL') public BaseURL ) {
       this.createForm();
      }
 
@@ -51,8 +53,13 @@ export class DishdetailComponent implements OnInit {
     this.dishService.getDishIds()
     .subscribe((dishIds)=> this.dishIds=dishIds);
     this.route.params.pipe(switchMap((params:Params)=>this.dishService.getDish(params['id'])))
-    .subscribe((dish)=>{this.dish=dish ; this.setPrevNext(dish.id)});
+    .subscribe((dish)=>{this.dish=dish ; this.setPrevNext(dish.id)},
+    errmess=>this.errMess=<any>errmess);
   }
+
+  // getUrl(){
+  //   return this.baseURL;
+  // }
 
   setPrevNext(dishId:string){
     const index= this.dishIds.indexOf(dishId);
