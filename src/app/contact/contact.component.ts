@@ -1,7 +1,10 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder,FormGroup,Validators } from '@angular/forms';
 import { Feedback, ContactType } from '../shared/feedback';
-import { flyInOut }  from '../animations/app.animation';
+import { flyInOut, visibility, expand }  from '../animations/app.animation';
+import { FeedbackService } from '../services/feedback.service';
+import { Subscription } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-contact',
@@ -12,7 +15,9 @@ import { flyInOut }  from '../animations/app.animation';
     'style':'display:block;'
   },
   animations:[
-    flyInOut()
+    flyInOut(),
+    visibility(),
+    expand()
   ]
 })
 export class ContactComponent implements OnInit {
@@ -21,7 +26,11 @@ export class ContactComponent implements OnInit {
   feedback: Feedback;
   contactType= ContactType;
   @ViewChild('fform') feedbackFormDirective;
-  
+  contactErrMess: Subscription;
+  feed: Feedback;
+  flag=true;
+  visflag=false;
+  visibility='hidden';
   formErrors={
     'firstname':'',
     'lastname':'',
@@ -50,7 +59,8 @@ export class ContactComponent implements OnInit {
     }
   };
  
-  constructor(private fb : FormBuilder) {
+  constructor(private fb : FormBuilder,
+    private feedbackService: FeedbackService) {
     this.createForm();
    }
    
@@ -95,8 +105,18 @@ export class ContactComponent implements OnInit {
   }
 
   onSubmit(){
+    this.visibility='shown';
     this.feedback=this.feedbackForm.value;
     console.log(this.feedback);
+    this.contactErrMess=this.feedbackService.submitFeedback(this.feedback)
+      .subscribe(feedback=>{
+        this.feedback=feedback;this.visibility='hidden';
+        this.visflag=true;  
+    });
+      
+      this.flag=false;
+      this.feed=this.feedback;
+      setTimeout(()=>{this.flag=true;this.visflag=false;   this.feedbackFormDirective.resetForm()},5000);
     this.feedbackForm.reset({
         firstname:'',
         lastname:'',
@@ -106,6 +126,6 @@ export class ContactComponent implements OnInit {
         contacttype:'None',
         message:''
       });
-      this.feedbackFormDirective.resetForm();
+   
   }
 }
