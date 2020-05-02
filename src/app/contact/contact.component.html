@@ -35,10 +35,10 @@
       </div>
     </div>
   </div>
-  <div fxFlex fxFlexOffset="20px" class="form-size"  *ngIf="flag; else elseTemplate" [@expand]>
+  <div fxFlex fxFlexOffset="20px" class="form-size" >
     <h1>Send us your Feedback</h1>
     <p >{{feedbackForm.value | json }} {{ feedbackForm.status | json }}</p>
-    <form novalidate [formGroup]="feedbackForm" #fform="ngForm" (ngSubmit)="onSubmit()" >
+    <form novalidate [formGroup]="feedbackForm" #fform="ngForm" (ngSubmit)="onSubmit()" [hidden]="flag || feedback"  [@expand]>
       <p>
         <mat-form-field class="half-width">
           <input matInput formControlName="firstname" placeholder="First Name" type="text" required>
@@ -87,25 +87,30 @@
       <button type="submit" mat-button class="background-primary text-floral-white"
       [disabled]="feedbackForm.invalid">Submit</button>
     </form>
+
+    <div [hidden]="!flag" [@expand]>
+      <h3>Submitting Form</h3>
+      <mat-spinner></mat-spinner>
+    </div>
+
+    <div  *ngIf="feedback" [@expand]>
+      <h3>Your Submission</h3>
+      <mat-list>
+          <p matLine><span><b>First Name:</b></span> {{feedback.firstname}}</p>
+          <p matLine><span><b>Last Name:</b></span> {{feedback.lastname}}</p>
+          <p matLine><span><b>Tel. Number:</b></span> {{feedback.telnum}}</p>
+          <p matLine><span><b>Email:</b></span> {{feedback.email}}</p>
+          <p matLine><span><b>Contact You?:</b></span>  {{feedback.agree}}</p>
+          <p matLine><span><b>How?:</b></span> {{feedback.contactype}}</p>
+          <p matLine><span><b>Feedback:</b></span> {{feedback.message}}</p>      
+      </mat-list>
+    </div>
+
+    <div *ngIf="feedbackErrMess" [@expand]>
+      <h2>Error</h2>
+      <h4>{{feedbackErrMess}}</h4>
+    </div>
+
   </div>
   
-  <ng-template #elseTemplate [@expand]>
-    <h1>Send us your Feedback</h1> 
-  <div fxFlex  *ngIf="visflag" >
-    <h1>Your Submission</h1>
-    <mat-list *ngIf="feed">
-        <p matLine><span><b>First Name:</b></span> {{feed.firstname}}</p>
-        <p matLine><span><b>Last Name:</b></span> {{feed.lastname}}</p>
-        <p matLine><span><b>Tel. Number:</b></span> {{feed.telnum}}</p>
-        <p matLine><span><b>Email:</b></span> {{feed.email}}</p>
-        <p matLine><span><b>Contact You?:</b></span>  {{feed.agree}}</p>
-        <p matLine><span><b>How?:</b></span> {{feed.contactype}}</p>
-        <p matLine><span><b>Feedback:</b></span> {{feed.message}}</p>      
-    </mat-list>
-  </div>
- </ng-template> 
-  <div fxFlex [@visibility]="visibility">
-    <h2>Submitting Form</h2>
-    <mat-spinner></mat-spinner>
-  </div>
 </div>

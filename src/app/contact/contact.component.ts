@@ -16,7 +16,6 @@ import { map } from 'rxjs/operators';
   },
   animations:[
     flyInOut(),
-    visibility(),
     expand()
   ]
 })
@@ -26,12 +25,10 @@ export class ContactComponent implements OnInit {
   feedback: Feedback;
   contactType= ContactType;
   @ViewChild('fform') feedbackFormDirective;
-  contactErrMess: Subscription;
   feed: Feedback;
-  flag=true;
-  visflag=false;
-  visibility='hidden';
-  formErrors={
+  feedbackErrMess:string;
+  flag:boolean;
+    formErrors={
     'firstname':'',
     'lastname':'',
     'telnum':'',
@@ -105,18 +102,15 @@ export class ContactComponent implements OnInit {
   }
 
   onSubmit(){
-    this.visibility='shown';
-    this.feedback=this.feedbackForm.value;
+    this.flag=true;
+    this.feed=this.feedbackForm.value;
     console.log(this.feedback);
-    this.contactErrMess=this.feedbackService.submitFeedback(this.feedback)
-      .subscribe(feedback=>{
-        this.feedback=feedback;this.visibility='hidden';
-        this.visflag=true;  
-    });
-      
-      this.flag=false;
-      this.feed=this.feedback;
-      setTimeout(()=>{this.flag=true;this.visflag=false;   this.feedbackFormDirective.resetForm()},5000);
+    this.feedbackService.submitFeedback(this.feed)
+      .subscribe(feedback=>{setTimeout(()=>{this.feedback=feedback;this.flag=false;
+        setTimeout(()=>this.feedback=null,5000)
+        },2000)},  
+      err=>{this.feedbackErrMess=err});
+     this.feedbackFormDirective.resetForm();
     this.feedbackForm.reset({
         firstname:'',
         lastname:'',
